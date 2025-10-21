@@ -8,7 +8,7 @@
     * {
       box-sizing: border-box;
     }
-    body {
+     body {
       margin: 0;
       font-family: 'Fredoka', sans-serif;
       background-color: #fde0ef;
@@ -21,29 +21,32 @@
 
     .topbar {
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
       align-items: center;
-      padding: 12px 15px;
+      padding: 15px 20px;
       background-color: #fcd4e3;
       border-bottom: 3px solid #fbaed2;
-      font-weight: 600;
-      font-size: 18px;
-      color: #aa4780;
-      user-select: none;
+    }
+
+    .topbar-left,
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
     }
 
     .topbar button {
-      width: 60px;
-      height: 60px;
-      margin-left: 15px;
+      width: 100px;
+      height: 80px;
       border: none;
-      border-radius: 12px;
+      border-radius: 20px;
       background-color: #ffe3f0;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-      font-size: 28px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      font-size: 30px;
       cursor: pointer;
-      transition: background-color 0.3s, transform 0.2s;
+      transition: transform 0.2s, background-color 0.3s;
     }
+
     .topbar button:hover {
       background-color: #ffcfe8;
       transform: scale(1.1);
@@ -55,96 +58,97 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 15px 10px 30px;
-      gap: 12px;
+      padding: 20px 10px 40px;
+      gap: 15px;
+      overflow-y: auto;
     }
 
     .main-content {
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      gap: 15px;
+      gap: 20px;
       flex-wrap: wrap;
-      max-width: 520px;
-      width: 100%;
     }
 
     #piece-count {
       font-weight: 600;
-      font-size: 16px;
+      font-size: 20px;
       color: #aa4780;
       user-select: none;
-      margin-left: auto;
     }
 
     #preview-container {
       text-align: center;
-      margin-bottom: 10px;
     }
 
     #preview-image {
-      width: 90px;
-      height: 90px;
+      width: 120px;
+      height: 120px;
       object-fit: cover;
-      border: 3px solid #fbaed2;
-      border-radius: 10px;
-      box-shadow: 0 3px 7px rgba(0,0,0,0.12);
+      border: 4px solid #fbaed2;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       user-select: none;
     }
 
-    /* Tabuleiro reduzido para 350px */
+    /* Ajustado para 500px */
     #board {
-      width: 350px;
-      height: 350px;
+      width: 500px;
+      height: 500px;
       background-color: #ffeef6;
-      border: 5px solid #fbaed2;
-      border-radius: 14px;
+      border: 6px solid #fbaed2;
+      border-radius: 16px;
       position: relative;
-      box-shadow: 0 0 14px #fbaed288;
+      box-shadow: 0 0 20px #fbaed288;
       overflow: hidden;
       flex-shrink: 0;
     }
 
-    /* Container das peças menor: 140px de largura */
+    /* Ajustado para 200px largura e 500px altura */
     #pieces-container {
-      width: 140px;
-      height: 350px;
+      width: 200px;
+      height: 500px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
       overflow-y: auto;
-      padding: 8px;
+      overflow-x: hidden;
+      padding: 10px;
       background-color: #fff0f7;
-      border-radius: 10px;
-      border: 2px solid #fbaed2;
+      border-radius: 12px;
+      border: 3px solid #fbaed2;
       scrollbar-width: thin;
       user-select: none;
     }
+
     #pieces-container::-webkit-scrollbar {
-      width: 6px;
+      width: 8px;
     }
+
     #pieces-container::-webkit-scrollbar-thumb {
       background-color: #fbaed2;
       border-radius: 10px;
     }
 
     .piece {
-      background-size: 350px 350px;
+      /* O tamanho das peças será controlado via JS baseado no boardSize */
+      background-size: 500px 500px;
       background-repeat: no-repeat;
-      border-radius: 10px;
-      box-shadow: 0 1.5px 5px rgba(0,0,0,0.15);
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
       cursor: grab;
       transition: box-shadow 0.3s, border 0.3s;
       position: relative;
       flex-shrink: 0;
-      width: 70px;
-      height: 70px;
     }
+
     .piece.dragging {
       cursor: grabbing;
       box-shadow: 0 0 15px 3px #fbaed2;
       z-index: 1000;
     }
+
     .piece.correct {
       border: 3px solid #69c36c;
       cursor: default;
@@ -155,13 +159,13 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 350px;
-      height: 350px;
+      width: 500px;
+      height: 500px;
       background-size: cover;
       opacity: 0;
       transition: opacity 0.8s ease;
       pointer-events: none;
-      border-radius: 14px;
+      border-radius: 16px;
     }
 
     #board-blocker {
@@ -170,36 +174,33 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(255,255,255,0.7);
-      z-index: 100;
-      display: none;
+      background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
+      z-index: 100; /* Ensure it's on top */
+      display: none; /* Hidden by default */
     }
 
-    /* RESPONSIVO: empilhar no celular */
-    @media (max-width: 440px) {
+    @media (max-width: 800px) {
       .main-content {
         flex-direction: column;
         align-items: center;
-        max-width: 90vw;
       }
 
       #board, #pieces-container {
         width: 90vw;
-        height: auto;
+        height: 90vw;
       }
 
       #pieces-container {
         flex-direction: row;
         overflow-x: auto;
         overflow-y: hidden;
-        height: 90px;
-        margin-top: 8px;
+        height: auto;
       }
 
       .piece {
-        width: 60px !important;
-        height: 60px !important;
-        background-size: 90vw 90vw !important;
+        width: calc(90vw / 4 - 12px);
+        height: calc(90vw / 4 - 12px);
+        background-size: 90vw 90vw;
       }
 
       #final-image {
@@ -366,3 +367,4 @@
   </script>
 </body>
 </html>
+
