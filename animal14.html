@@ -1,14 +1,12 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <title>Quebra-Cabeça Infantil</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet" />
   <style>
-    * {
-      box-sizing: border-box;
-    }
-      body {
+    * { box-sizing: border-box; }
+    body {
       margin: 0;
       font-family: 'Fredoka', sans-serif;
       background-color: #fde0ef;
@@ -78,9 +76,7 @@
       user-select: none;
     }
 
-    #preview-container {
-      text-align: center;
-    }
+    #preview-container { text-align: center; }
 
     #preview-image {
       width: 120px;
@@ -92,7 +88,6 @@
       user-select: none;
     }
 
-    /* Ajustado para 500px */
     #board {
       width: 500px;
       height: 500px;
@@ -105,7 +100,6 @@
       flex-shrink: 0;
     }
 
-    /* Ajustado para 200px largura e 500px altura */
     #pieces-container {
       width: 200px;
       height: 500px;
@@ -122,17 +116,13 @@
       user-select: none;
     }
 
-    #pieces-container::-webkit-scrollbar {
-      width: 8px;
-    }
-
+    #pieces-container::-webkit-scrollbar { width: 8px; }
     #pieces-container::-webkit-scrollbar-thumb {
       background-color: #fbaed2;
       border-radius: 10px;
     }
 
     .piece {
-      /* O tamanho das peças será controlado via JS baseado no boardSize */
       background-size: 500px 500px;
       background-repeat: no-repeat;
       border-radius: 12px;
@@ -174,47 +164,63 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
-      z-index: 100; /* Ensure it's on top */
-      display: none; /* Hidden by default */
+      background-color: rgba(255, 255, 255, 0.7);
+      z-index: 100;
+      display: none;
+    }
+
+    /* Tela preta parabéns */
+    #tela-parabens {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: black;
+      color: white;
+      font-size: 2.5em;
+      font-weight: bold;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      flex-direction: column;
+      text-align: center;
+    }
+    #tela-parabens button {
+      margin-top: 20px;
+      padding: 12px 24px;
+      font-size: 1em;
+      border: none;
+      border-radius: 8px;
+      background-color: #ff99cc;
+      color: black;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
 
     @media (max-width: 800px) {
-      .main-content {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      #board, #pieces-container {
-        width: 90vw;
-        height: 90vw;
-      }
-
+      .main-content { flex-direction: column; align-items: center; }
+      #board, #pieces-container { width: 90vw; height: 90vw; }
       #pieces-container {
         flex-direction: row;
         overflow-x: auto;
         overflow-y: hidden;
         height: auto;
       }
-
       .piece {
         width: calc(90vw / 4 - 12px);
         height: calc(90vw / 4 - 12px);
         background-size: 90vw 90vw;
       }
-
-      #final-image {
-        width: 90vw;
-        height: 90vw;
-      }
+      #final-image { width: 90vw; height: 90vw; }
     }
   </style>
 </head>
 <body>
 
   <div class="topbar">
-    <div class="topbar-left">
-    </div>
+    <div class="topbar-left"></div>
     <div class="topbar-right">
       <div id="piece-count">Total de Peças: 16</div>
       <button id="piecesBtn" title="Peças">🧩</button>
@@ -223,16 +229,22 @@
 
   <div class="game-area">
     <div id="preview-container">
-      <img id="preview-image" src="https://i.postimg.cc/ZKV9Y264/15.jpg" alt="Miniatura" />
+      <img id="preview-image" src="https://i.postimg.cc/8z3rLd25/15.jpg" alt="Miniatura" />
     </div>
 
     <div class="main-content">
       <div id="board">
-        <div id="board-blocker"></div> <!-- Add the blocker div here -->
+        <div id="board-blocker"></div>
         <div id="final-image"></div>
       </div>
       <div id="pieces-container"></div>
     </div>
+  </div>
+
+  <!-- Tela preta parabéns -->
+  <div id="tela-parabens">
+    🎉 Parabéns! Você completou o quebra-cabeça! 🎉
+    <button onclick="reiniciarJogo()">Jogar Novamente</button>
   </div>
 
   <!-- Sons -->
@@ -245,26 +257,26 @@
     const finalImage = document.getElementById("final-image");
     const previewImage = document.getElementById("preview-image");
     const pieceCountText = document.getElementById("piece-count");
-    const boardBlocker = document.getElementById("board-blocker"); // Get the blocker
+    const boardBlocker = document.getElementById("board-blocker");
     const moveSound = document.getElementById("move-sound");
     const winSound = document.getElementById("win-sound");
+    const telaParabens = document.getElementById("tela-parabens");
 
-    let boardSize = 750;
+    let boardSize = 500;
     let piecesPerRow = 2;
     let piecesPerCol = 2;
     let pieceSize = boardSize / piecesPerRow;
-
     const puzzleImage = "https://i.postimg.cc/8z3rLd25/15.jpg";
-
     let pieces = [];
 
     function createPieces(rows, cols) {
-      board.innerHTML = "";
-      board.innerHTML = '<div id="board-blocker"></div>'; // Ensure blocker is always present
-      board.appendChild(finalImage);
+      board.innerHTML = '<div id="board-blocker"></div><div id="final-image"></div>';
       piecesContainer.innerHTML = "";
       pieces = [];
       pieceSize = boardSize / cols;
+
+      finalImage.style.backgroundImage = `url(${puzzleImage})`;
+      finalImage.style.opacity = "0";
 
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
@@ -286,15 +298,10 @@
         }
       }
 
-      finalImage.style.backgroundImage = `url(${puzzleImage})`;
-      finalImage.style.opacity = "0";
-
       previewImage.src = puzzleImage;
       pieceCountText.textContent = `Total de Peças: ${rows * cols}`;
 
       shufflePieces();
-      // Re-append the blocker after shuffling so it's behind the pieces
-      board.insertBefore(boardBlocker, finalImage);
     }
 
     function shufflePieces() {
@@ -323,6 +330,10 @@
       const dy = y - this.correctY;
       const snapTolerance = pieceSize / 4;
 
+      // ✅ Reproduz o som sempre para todas as peças
+      const soundClone = moveSound.cloneNode();
+      soundClone.play();
+
       if (Math.abs(dx) < snapTolerance && Math.abs(dy) < snapTolerance) {
         this.style.position = "absolute";
         this.style.left = this.correctX + "px";
@@ -330,14 +341,12 @@
         this.classList.add("correct");
         this.setAttribute("draggable", "false");
         board.appendChild(this);
-        moveSound.play();
         checkComplete();
       } else {
         this.style.position = "absolute";
         this.style.left = x + "px";
         this.style.top = y + "px";
         board.appendChild(this);
-        moveSound.play();
       }
     }
 
@@ -362,15 +371,20 @@
       if (allCorrect) {
         finalImage.style.opacity = "1";
         winSound.play();
-        boardBlocker.style.display = "block"; // Show the blocker
-        setTimeout(() => {
-          alert("🎉 Parabéns! Você completou o quebra-cabeça!");
-        }, 500);
+        boardBlocker.style.display = "block";
+        telaParabens.style.display = "flex";
       }
     }
 
+    function reiniciarJogo() {
+      telaParabens.style.display = "none";
+      boardBlocker.style.display = "none";
+      createPieces(piecesPerRow, piecesPerCol);
+    }
+
+    // Inicializa o jogo com a tela preta escondida
+    telaParabens.style.display = "none";
     createPieces(piecesPerRow, piecesPerCol);
   </script>
 </body>
 </html>
-
