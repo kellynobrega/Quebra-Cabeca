@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
@@ -21,32 +21,29 @@
 
     .topbar {
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-end;
       align-items: center;
-      padding: 15px 20px;
+      padding: 12px 15px;
       background-color: #fcd4e3;
       border-bottom: 3px solid #fbaed2;
-    }
-
-    .topbar-left,
-    .topbar-right {
-      display: flex;
-      align-items: center;
-      gap: 15px;
+      font-weight: 600;
+      font-size: 18px;
+      color: #aa4780;
+      user-select: none;
     }
 
     .topbar button {
-      width: 100px;
-      height: 80px;
+      width: 60px;
+      height: 60px;
+      margin-left: 15px;
       border: none;
-      border-radius: 20px;
+      border-radius: 12px;
       background-color: #ffe3f0;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      font-size: 30px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      font-size: 28px;
       cursor: pointer;
-      transition: transform 0.2s, background-color 0.3s;
+      transition: background-color 0.3s, transform 0.2s;
     }
-
     .topbar button:hover {
       background-color: #ffcfe8;
       transform: scale(1.1);
@@ -58,97 +55,96 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 20px 10px 40px;
-      gap: 15px;
-      overflow-y: auto;
+      padding: 15px 10px 30px;
+      gap: 12px;
     }
 
     .main-content {
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      gap: 20px;
+      gap: 15px;
       flex-wrap: wrap;
+      max-width: 520px;
+      width: 100%;
     }
 
     #piece-count {
       font-weight: 600;
-      font-size: 20px;
+      font-size: 16px;
       color: #aa4780;
       user-select: none;
+      margin-left: auto;
     }
 
     #preview-container {
       text-align: center;
+      margin-bottom: 10px;
     }
 
     #preview-image {
-      width: 120px;
-      height: 120px;
+      width: 90px;
+      height: 90px;
       object-fit: cover;
-      border: 4px solid #fbaed2;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      border: 3px solid #fbaed2;
+      border-radius: 10px;
+      box-shadow: 0 3px 7px rgba(0,0,0,0.12);
       user-select: none;
     }
 
-    /* Ajustado para 500px */
+    /* Tabuleiro reduzido para 350px */
     #board {
-      width: 500px;
-      height: 500px;
+      width: 350px;
+      height: 350px;
       background-color: #ffeef6;
-      border: 6px solid #fbaed2;
-      border-radius: 16px;
+      border: 5px solid #fbaed2;
+      border-radius: 14px;
       position: relative;
-      box-shadow: 0 0 20px #fbaed288;
+      box-shadow: 0 0 14px #fbaed288;
       overflow: hidden;
       flex-shrink: 0;
     }
 
-    /* Ajustado para 200px largura e 500px altura */
+    /* Container das peças menor: 140px de largura */
     #pieces-container {
-      width: 200px;
-      height: 500px;
+      width: 140px;
+      height: 350px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       overflow-y: auto;
-      overflow-x: hidden;
-      padding: 10px;
+      padding: 8px;
       background-color: #fff0f7;
-      border-radius: 12px;
-      border: 3px solid #fbaed2;
+      border-radius: 10px;
+      border: 2px solid #fbaed2;
       scrollbar-width: thin;
       user-select: none;
     }
-
     #pieces-container::-webkit-scrollbar {
-      width: 8px;
+      width: 6px;
     }
-
     #pieces-container::-webkit-scrollbar-thumb {
       background-color: #fbaed2;
       border-radius: 10px;
     }
 
     .piece {
-      /* O tamanho das peças será controlado via JS baseado no boardSize */
-      background-size: 500px 500px;
+      background-size: 350px 350px;
       background-repeat: no-repeat;
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      border-radius: 10px;
+      box-shadow: 0 1.5px 5px rgba(0,0,0,0.15);
       cursor: grab;
       transition: box-shadow 0.3s, border 0.3s;
       position: relative;
       flex-shrink: 0;
+      width: 70px;
+      height: 70px;
     }
-
     .piece.dragging {
       cursor: grabbing;
       box-shadow: 0 0 15px 3px #fbaed2;
       z-index: 1000;
     }
-
     .piece.correct {
       border: 3px solid #69c36c;
       cursor: default;
@@ -159,13 +155,13 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 500px;
-      height: 500px;
+      width: 350px;
+      height: 350px;
       background-size: cover;
       opacity: 0;
       transition: opacity 0.8s ease;
       pointer-events: none;
-      border-radius: 16px;
+      border-radius: 14px;
     }
 
     #board-blocker {
@@ -174,33 +170,36 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
-      z-index: 100; /* Ensure it's on top */
-      display: none; /* Hidden by default */
+      background-color: rgba(255,255,255,0.7);
+      z-index: 100;
+      display: none;
     }
 
-    @media (max-width: 800px) {
+    /* RESPONSIVO: empilhar no celular */
+    @media (max-width: 440px) {
       .main-content {
         flex-direction: column;
         align-items: center;
+        max-width: 90vw;
       }
 
       #board, #pieces-container {
         width: 90vw;
-        height: 90vw;
+        height: auto;
       }
 
       #pieces-container {
         flex-direction: row;
         overflow-x: auto;
         overflow-y: hidden;
-        height: auto;
+        height: 90px;
+        margin-top: 8px;
       }
 
       .piece {
-        width: calc(90vw / 4 - 12px);
-        height: calc(90vw / 4 - 12px);
-        background-size: 90vw 90vw;
+        width: 60px !important;
+        height: 60px !important;
+        background-size: 90vw 90vw !important;
       }
 
       #final-image {
@@ -213,12 +212,8 @@
 <body>
 
   <div class="topbar">
-    <div class="topbar-left">
-    </div>
-    <div class="topbar-right">
-      <div id="piece-count">Total de Peças: 16</div>
-      <button id="piecesBtn" title="Peças">🧩</button>
-    </div>
+    <div id="piece-count">Total de Peças: 16</div>
+    <button id="piecesBtn" title="Peças">🧩</button>
   </div>
 
   <div class="game-area">
@@ -249,10 +244,9 @@
     const moveSound = document.getElementById("move-sound");
     const winSound = document.getElementById("win-sound");
 
-    // Ajustado para 500px
-    let boardSize = 500;
-    let piecesPerRow = 2;
-    let piecesPerCol = 2;
+    let boardSize = 350;
+    let piecesPerRow = 4;
+    let piecesPerCol = 4;
     let pieceSize = boardSize / piecesPerRow;
 
     const puzzleImage = "https://i.postimg.cc/vZP4b78G/1.jpg";
@@ -261,7 +255,7 @@
 
     function createPieces(rows, cols) {
       board.innerHTML = "";
-      board.innerHTML = '<div id="board-blocker"></div>';
+      board.appendChild(boardBlocker);
       board.appendChild(finalImage);
       piecesContainer.innerHTML = "";
       pieces = [];
@@ -294,7 +288,6 @@
       pieceCountText.textContent = `Total de Peças: ${rows * cols}`;
 
       shufflePieces();
-      board.insertBefore(boardBlocker, finalImage);
     }
 
     function shufflePieces() {
@@ -373,4 +366,3 @@
   </script>
 </body>
 </html>
-
