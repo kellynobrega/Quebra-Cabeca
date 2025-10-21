@@ -8,7 +8,7 @@
     * {
       box-sizing: border-box;
     }
-     body {
+    body {
       margin: 0;
       font-family: 'Fredoka', sans-serif;
       background-color: #fde0ef;
@@ -92,10 +92,9 @@
       user-select: none;
     }
 
-    /* Ajustado para 500px */
     #board {
-      width: 500px;
-      height: 500px;
+      width: 750px;
+      height: 750px;
       background-color: #ffeef6;
       border: 6px solid #fbaed2;
       border-radius: 16px;
@@ -105,10 +104,9 @@
       flex-shrink: 0;
     }
 
-    /* Ajustado para 200px largura e 500px altura */
     #pieces-container {
-      width: 200px;
-      height: 500px;
+      width: 300px;
+      height: 750px;
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -132,8 +130,9 @@
     }
 
     .piece {
-      /* O tamanho das peças será controlado via JS baseado no boardSize */
-      background-size: 500px 500px;
+      width: 100px;
+      height: 100px;
+      background-size: 750px 750px;
       background-repeat: no-repeat;
       border-radius: 12px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.15);
@@ -159,8 +158,8 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 500px;
-      height: 500px;
+      width: 750px;
+      height: 750px;
       background-size: cover;
       opacity: 0;
       transition: opacity 0.8s ease;
@@ -213,8 +212,12 @@
 <body>
 
   <div class="topbar">
-    <div id="piece-count">Total de Peças: 16</div>
-    <button id="piecesBtn" title="Peças">🧩</button>
+    <div class="topbar-left">
+    </div>
+    <div class="topbar-right">
+      <div id="piece-count">Total de Peças: 16</div>
+      <button id="piecesBtn" title="Peças">🧩</button>
+    </div>
   </div>
 
   <div class="game-area">
@@ -224,7 +227,7 @@
 
     <div class="main-content">
       <div id="board">
-        <div id="board-blocker"></div>
+        <div id="board-blocker"></div> <!-- Add the blocker div here -->
         <div id="final-image"></div>
       </div>
       <div id="pieces-container"></div>
@@ -241,13 +244,13 @@
     const finalImage = document.getElementById("final-image");
     const previewImage = document.getElementById("preview-image");
     const pieceCountText = document.getElementById("piece-count");
-    const boardBlocker = document.getElementById("board-blocker");
+    const boardBlocker = document.getElementById("board-blocker"); // Get the blocker
     const moveSound = document.getElementById("move-sound");
     const winSound = document.getElementById("win-sound");
 
-    let boardSize = 350;
-    let piecesPerRow = 4;
-    let piecesPerCol = 4;
+    let boardSize = 750;
+    let piecesPerRow = 2;
+    let piecesPerCol = 2;
     let pieceSize = boardSize / piecesPerRow;
 
     const puzzleImage = "https://i.postimg.cc/vZP4b78G/1.jpg";
@@ -256,7 +259,7 @@
 
     function createPieces(rows, cols) {
       board.innerHTML = "";
-      board.appendChild(boardBlocker);
+      board.innerHTML = '<div id="board-blocker"></div>'; // Ensure blocker is always present
       board.appendChild(finalImage);
       piecesContainer.innerHTML = "";
       pieces = [];
@@ -289,6 +292,8 @@
       pieceCountText.textContent = `Total de Peças: ${rows * cols}`;
 
       shufflePieces();
+      // Re-append the blocker after shuffling so it's behind the pieces
+      board.insertBefore(boardBlocker, finalImage);
     }
 
     function shufflePieces() {
@@ -356,7 +361,7 @@
       if (allCorrect) {
         finalImage.style.opacity = "1";
         winSound.play();
-        boardBlocker.style.display = "block";
+        boardBlocker.style.display = "block"; // Show the blocker
         setTimeout(() => {
           alert("🎉 Parabéns! Você completou o quebra-cabeça!");
         }, 500);
@@ -367,4 +372,3 @@
   </script>
 </body>
 </html>
-
