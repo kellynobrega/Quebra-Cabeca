@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jogo de Colorir</title>
+  <style>
+    * { box-sizing: border-box; }
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: "Comic Sans MS", cursive;
+      overflow: hidden;
+    }
+
+    body.fundo-azul {
+      background-color: #87CEFA;
+    }
+
+    .background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://i.postimg.cc/0yQ5TTgJ/1.gif') no-repeat center center fixed;
+      background-size: cover;
+      z-index: -1;
+    }
+
+    .tela, .menu, .jogo {
+      display: none;
+    }
+
+    .ativa {
+      display: block;
+    }
+
+    .container {
+      position: relative;
+      text-align: center;
+      height: 100vh;
+      color: black;
+    }
+
+    #startGameBtn {
+      position: absolute;
+      left: 50%;
+      top: 80%;
+      transform: translateX(-50%);
+      padding: 15px 40px;
+      font-size: 1.5em;
+      border: none;
+      border-radius: 30px;
+      background-color: #FFD700;
+      color: #000;
+      cursor: pointer;
+      animation: pulse 1.5s infinite;
+      z-index: 10;
+    }
+
+    #startGameBtn:hover {
+      transform: translateX(-50%) scale(1.1);
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
+      70% { box-shadow: 0 0 0 15px rgba(255, 215, 0, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+    }
+
+    #menuOpcoes {
+      position: relative;
+      left: 50%;
+      top: 80%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: none;
+    }
+
+    #menuOpcoes button {
+      padding: 15px 40px;
+      margin: 10px 5px;
+      font-size: 1.5em;
+      border: none;
+      border-radius: 30px;
+      background-color: #add8e6;
+      color: #333;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      min-width: 150px;
+    }
+
+    #menuOpcoes button:hover {
+      background-color: #cceeff;
+    }
+
+    iframe {
+      width: 100%;
+      height: 90vh;
+      border: none;
+    }
+
+    /* Grid de letras */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(120px, 1fr));
+      gap: 15px;
+      width: 90%;
+      max-width: 800px;
+      margin: 30px auto;
+    }
+
+    .thumbnail {
+      border-radius: 50%;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+      border: 4px solid white;
+      background-color: white;
+      width: 100px;
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: auto;
+      transition: transform 0.3s ease;
+    }
+
+    .thumbnail:hover {
+      transform: scale(1.08);
+    }
+
+    .thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    /* Botão Voltar fixo */
+    #btnVoltar {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1000;
+      padding: 10px 20px;
+      font-size: 1.3em;
+      border-radius: 30px;
+      border: none;
+      background-color: #FFD700;
+      cursor: pointer;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+      transition: background-color 0.3s ease;
+      display: block;
+    }
+
+    #btnVoltar:hover {
+      background-color: #FFC107;
+    }
+
+    #modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.7);
+      justify-content: center;
+      align-items: center;
+    }
+
+    #modalContent {
+      background-color: white;
+      padding: 20px 30px;
+      border-radius: 10px;
+      max-width: 400px;
+      color: black;
+      font-size: 1.2em;
+      text-align: left;
+      position: relative;
+    }
+
+    #closeModal {
+      position: absolute;
+      top: 10px; right: 10px;
+      background: #ccc;
+      border: none;
+      font-size: 1.5em;
+      border-radius: 50%;
+      width: 30px; height: 30px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body class="fundo-azul">
+
+  <!-- Fundo animado (GIF) -->
+  <div class="background" id="backgroundGif"></div>
+
+  <!-- Botão Voltar -->
+  <button id="btnVoltar">🔙 Voltar</button>
+
+  <!-- Tela inicial -->
+  <div id="telaInicial" class="tela ativa container">
+    <button id="startGameBtn">🎮 Start Game</button>
+  </div>
+
+  <!-- Menu de opções -->
+  <div id="menuOpcoes" class="container">
+    <button id="jogarBtn">▶ Jogar</button>
+    <button id="instrucoesBtn">ℹ Instruções</button>
+  </div>
+
+  <!-- Menu de letras -->
+  <div id="menuLetras" class="menu container">
+    <h2>Escolha uma letra para colorir:</h2>
+    <div class="grid" id="gridLetras"></div>
+  </div>
+
+  <!-- Área do jogo -->
+  <div id="areaJogo" class="jogo container">
+    <iframe id="iframeJogo" src=""></iframe>
+  </div>
+
+  <!-- Modal -->
+  <div id="modal">
+    <div id="modalContent">
+      <button id="closeModal" title="Fechar">×</button>
+      <h2>Instruções do Jogo</h2>
+      <ol>
+        <li>Clique em Jogar.</li>
+        <li>Ao entrar no Menu escolha a imagem que deseja montar.</li>
+        <li>Dentro do jogo pode escolher 4, 9 ou 16 peças.</li>
+        <li>Ao concluir basta clicar no botão Voltar e escolher outra imagem.</li>
+      </ol>
+    </div>
+  </div>
+
+  <script>
+    const telaInicial = document.getElementById("telaInicial");
+    const menuOpcoes = document.getElementById("menuOpcoes");
+    const menuLetras = document.getElementById("menuLetras");
+    const areaJogo = document.getElementById("areaJogo");
+    const btnVoltar = document.getElementById("btnVoltar");
+    const backgroundGif = document.getElementById("backgroundGif");
+    const iframeJogo = document.getElementById("iframeJogo");
+
+    // Lista de letras
+    const letras = [{ nome: "Animal 1", url: "https://kellynobrega.github.io/Quebra-Cabeca/animal1.html", img: "https://i.postimg.cc/hPfRz9cX/1.jpg" },
+      { nome: "Animal 2", url: "https://kellynobrega.github.io/Quebra-Cabeca/animal2.html", img: "https://i.postimg.cc/66bDXynX/2.jpg" },
+      { nome: "Animal 3", url: "https://kellynobrega.github.io/Quebra-Cabeca/animal3.html", img: "https://i.postimg.cc/ZYQDQXzF/3.jpg" },
+      { nome: "Animal 4", url: "https://kellynobrega.github.io/Quebra-Cabeca/animal4.html", img: "https://i.postimg.cc/kgv0Lwy1/4.jpg" },
+      { nome: "Animal 5", url: "https://kellynobrega.github.io/Quebra-Cabeca/animal5.html", img: "https://i.postimg.cc/JzMg3ZWY/5.jpg" },
+      { nome: "Animal 6", url: "https://kellynobrega.github.io/Quebra-Cabeca/animal6.html", img: "https://i.postimg.cc/TwzNKW9g/6.jpg" },
+      { nome: "Animal 7", url: "https://kellynobrega.github.io/Quebra-Cabeca/animal7.html", img: "https://i.postimg.cc/MTQdJpSc/8.jpg" },
+      { nome: "Animal 8", url: "https://kellynobrega.github.io/Quebra-Cabeca/animal8.html", img: "https://i.postimg.cc/7ZtVC2PX/9.jpg" },
+      { nome: "Animal 9", url: "https://kellynobrega.github.io/Quebra-Cabeca/animal9.html", img: "https://i.postimg.cc/7LCpbD48/17.jpg" },
+      { nome: "Animal 10", url: "https://kellynobrega.github.io/Quebra-Cabeca/animal10.html", img: "https://i.postimg.cc/tTQmTxDP/11.jpg" },
+      { nome: "Animal 11", url: "https://kellynobrega.github.io/Quebra-Cabeca/animal11.html", img: "https://i.postimg.cc/rFmgqjMw/12.jpg" },
+      { nome: "Animal 12", url: "https://kellynobrega.github.io/Quebra-Cabeca/animal12.html", img: "https://i.postimg.cc/8Pjd2Cmf/13.jpg" },
+      { nome: "Animal 13", url: "https://kellynobrega.github.io/Quebra-Cabeca/animal13.html", img: "https://i.postimg.cc/wvwJPKt6/14.jpg" },
+      { nome: "Animal 14", url: "https://kellynobrega.github.io/Quebra-Cabeca/animal14.html", img: "https://i.postimg.cc/43Z9x4VB/15.jpg" },
+      { nome: "Animal 15", url: "https://kellynobrega.github.io/Quebra-Cabeca/animal15.html", img: "https://i.postimg.cc/VsT0bWXm/16.jpg" },
+    ];
+
+    const gridLetras = document.getElementById("gridLetras");
+    letras.forEach(letra => {
+      const div = document.createElement("div");
+      div.className = "thumbnail";
+      div.innerHTML = `<img src="${letra.img}" alt="${letra.nome}">`;
+      div.onclick = () => abrirLetra(letra.url);
+      gridLetras.appendChild(div);
+    });
+
+    // Start Game
+    document.getElementById("startGameBtn").onclick = () => {
+      telaInicial.classList.remove("ativa");
+      menuOpcoes.style.display = "block";
+      document.body.classList.remove("fundo-azul");
+      backgroundGif.style.display = "block";
+    };
+
+    // Jogar
+    document.getElementById("jogarBtn").onclick = () => {
+      menuOpcoes.style.display = "none";
+      menuLetras.classList.add("ativa");
+      backgroundGif.style.display = "none";
+    };
+
+    // Modal
+    document.getElementById("instrucoesBtn").onclick = () => {
+      document.getElementById("modal").style.display = "flex";
+    };
+    document.getElementById("closeModal").onclick = () => {
+      document.getElementById("modal").style.display = "none";
+    };
+
+    // Abrir jogo
+    function abrirLetra(url) {
+      menuLetras.classList.remove("ativa");
+      areaJogo.classList.add("ativa");
+      iframeJogo.src = url;
+    }
+
+    // Voltar
+    btnVoltar.onclick = () => {
+      if (areaJogo.classList.contains("ativa")) {
+        areaJogo.classList.remove("ativa");
+        menuLetras.classList.add("ativa");
+        iframeJogo.src = "";
+      } else if (menuLetras.classList.contains("ativa")) {
+        menuLetras.classList.remove("ativa");
+        menuOpcoes.style.display = "block";
+        backgroundGif.style.display = "block";
+      } else if (menuOpcoes.style.display === "block") {
+        menuOpcoes.style.display = "none";
+        telaInicial.classList.add("ativa");
+        document.body.classList.add("fundo-azul");
+        backgroundGif.style.display = "block";
+      } else if (telaInicial.classList.contains("ativa")) {
+        window.location.href = "https://sites.google.com/d/1vi2c7zhmjgEumm5DtcYGsTzhOx2d887a/p/1MnoPO6ILMwaQnyB-746o8InhA7orbYA6/edit";
+      }
+    };
+  </script>
+
+</body>
+</html>
