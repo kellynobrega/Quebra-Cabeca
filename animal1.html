@@ -129,7 +129,7 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.15);
       cursor: grab;
       transition: box-shadow 0.3s, border 0.3s;
-      position: relative;
+      position: absolute;
       flex-shrink: 0;
     }
 
@@ -326,11 +326,17 @@
       let x = e.clientX - boardRect.left - this.dragOffsetX;
       let y = e.clientY - boardRect.top - this.dragOffsetY;
 
+      // Garantir que a peça fique dentro do tabuleiro
+      if (x < 0) x = 0;
+      if (y < 0) y = 0;
+      if (x + pieceSize > boardSize) x = boardSize - pieceSize;
+      if (y + pieceSize > boardSize) y = boardSize - pieceSize;
+
       const dx = x - this.correctX;
       const dy = y - this.correctY;
       const snapTolerance = pieceSize / 4;
 
-      // ✅ Reproduz o som sempre para todas as peças
+      // Som
       const soundClone = moveSound.cloneNode();
       soundClone.play();
 
@@ -382,7 +388,6 @@
       createPieces(piecesPerRow, piecesPerCol);
     }
 
-    // Inicializa o jogo com a tela preta escondida
     telaParabens.style.display = "none";
     createPieces(piecesPerRow, piecesPerCol);
   </script>
