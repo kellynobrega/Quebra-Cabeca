@@ -146,6 +146,8 @@
             cursor: grabbing;
             box-shadow: 0 0 15px 3px #fbaed2;
             z-index: 1000;
+            /* Garante que a peça fique totalmente opaca durante o arraste */
+            opacity: 1 !important;
         }
 
         .piece.correct {
@@ -313,6 +315,9 @@
                     piece.style.backgroundPosition = `-${c * pieceSize}px -${r * pieceSize}px`;
                     piece.correctX = c * pieceSize;
                     piece.correctY = r * pieceSize;
+                    // ✅ Adiciona a posição original
+                    piece.originalX = piece.offsetLeft;
+                    piece.originalY = piece.offsetTop;
 
                     piece.setAttribute("draggable", "true");
                     piece.addEventListener("dragstart", dragStart);
@@ -339,15 +344,11 @@
 
         function dragStart(e) {
             this.classList.add("dragging");
+            // ✅ Garante a opacidade total durante o arraste
+            this.style.opacity = '1';
             const rect = this.getBoundingClientRect();
             this.dragOffsetX = e.clientX - rect.left;
             this.dragOffsetY = e.clientY - rect.top;
-
-            // ✅ Remove a peça do piecesContainer
-            piecesContainer.removeChild(this);
-
-            // ✅ Adiciona a peça ao board
-            board.appendChild(this);
         }
 
         function dragEnd(e) {
@@ -366,16 +367,19 @@
             soundClone.play();
 
             if (Math.abs(dx) < snapTolerance && Math.abs(dy) < snapTolerance) {
+                // Encaixe correto
                 this.style.position = "absolute";
                 this.style.left = this.correctX + "px";
                 this.style.top = this.correctY + "px";
                 this.classList.add("correct");
                 this.setAttribute("draggable", "false");
+                this.style.cursor = "default"; // Remove o cursor de "arrastar"
                 checkComplete();
             } else {
+                // Encaixe incorreto - Retorna à posição original
                 this.style.position = "absolute";
-                this.style.left = x + "px";
-                this.style.top = y + "px";
+                this.style.left = this.originalX + "px";
+                this.style.top = this.originalY + "px";
             }
         }
 
