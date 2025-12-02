@@ -354,12 +354,25 @@
             this.dragOffsetY = e.clientY - rect.top;
         }
 
+        // 🛑 CORREÇÃO! Verificação de limites do tabuleiro no dragEnd
         function dragEnd(e) {
             this.classList.remove("dragging");
 
             const boardRect = board.getBoundingClientRect();
             let x = e.clientX - boardRect.left - this.dragOffsetX;
             let y = e.clientY - boardRect.top - this.dragOffsetY;
+
+            // 🔥 Impedir que a peça saia do tabuleiro
+            if (
+                x < 0 ||
+                y < 0 ||
+                x + pieceSize > boardSize ||
+                y + pieceSize > boardSize
+            ) {
+                // Volta para posição aleatória dentro do tabuleiro
+                x = Math.random() * (boardSize - pieceSize);
+                y = Math.random() * (boardSize - pieceSize);
+            }
 
             const dx = x - this.correctX;
             const dy = y - this.correctY;
@@ -377,7 +390,7 @@
                 this.style.cursor = "default";
                 checkComplete();
             } else {
-                // Encaixe incorreto - Permanece no tabuleiro
+                // Mantém a peça no tabuleiro
                 this.style.left = x + "px";
                 this.style.top = y + "px";
             }
