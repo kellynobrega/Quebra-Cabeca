@@ -1,396 +1,421 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-  <meta charset="UTF-8" />
-  <title>Quebra-Cabeça Infantil</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet" />
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: 'Fredoka', sans-serif;
-      background-color: #fde0ef;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      color: #444;
-      overflow-x: hidden;
-    }
+    <meta charset="UTF-8" />
+    <title>Quebra-Cabeça Infantil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 20px;
-      background-color: #fcd4e3;
-      border-bottom: 3px solid #fbaed2;
-    }
+        body {
+            margin: 0;
+            font-family: 'Fredoka', sans-serif;
+            background-color: #fde0ef;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            color: #444;
+            overflow-x: hidden;
+        }
 
-    .topbar-left,
-    .topbar-right {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #fcd4e3;
+            border-bottom: 3px solid #fbaed2;
+        }
 
-    .topbar button {
-      width: 100px;
-      height: 80px;
-      border: none;
-      border-radius: 20px;
-      background-color: #ffe3f0;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      font-size: 30px;
-      cursor: pointer;
-      transition: transform 0.2s, background-color 0.3s;
-    }
+        .topbar-left,
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
 
-    .topbar button:hover {
-      background-color: #ffcfe8;
-      transform: scale(1.1);
-    }
+        .topbar button {
+            width: 100px;
+            height: 80px;
+            border: none;
+            border-radius: 20px;
+            background-color: #ffe3f0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            font-size: 30px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s;
+        }
 
-    .game-area {
-      flex: 1;
-      background-color: #fff7fa;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px 10px 40px;
-      gap: 15px;
-      overflow-y: auto;
-    }
+        .topbar button:hover {
+            background-color: #ffcfe8;
+            transform: scale(1.1);
+        }
 
-    .main-content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
+        .game-area {
+            flex: 1;
+            background-color: #fff7fa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 10px 40px;
+            gap: 15px;
+            overflow-y: auto;
+        }
 
-    #piece-count {
-      font-weight: 600;
-      font-size: 20px;
-      color: #aa4780;
-      user-select: none;
-    }
+        .main-content {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
 
-    #preview-container { text-align: center; }
+        #piece-count {
+            font-weight: 600;
+            font-size: 20px;
+            color: #aa4780;
+            user-select: none;
+        }
 
-    #preview-image {
-      width: 120px;
-      height: 120px;
-      object-fit: cover;
-      border: 4px solid #fbaed2;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      user-select: none;
-    }
+        #preview-container {
+            text-align: center;
+        }
 
-    #board {
-      width: 500px;
-      height: 500px;
-      background-color: #ffeef6;
-      border: 6px solid #fbaed2;
-      border-radius: 16px;
-      position: relative;
-      box-shadow: 0 0 20px #fbaed288;
-      overflow: hidden;
-      flex-shrink: 0;
-    }
+        #preview-image {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border: 4px solid #fbaed2;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            user-select: none;
+        }
 
-    #pieces-container {
-      width: 200px;
-      height: 500px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      overflow-y: auto;
-      overflow-x: hidden;
-      padding: 10px;
-      background-color: #fff0f7;
-      border-radius: 12px;
-      border: 3px solid #fbaed2;
-      scrollbar-width: thin;
-      user-select: none;
-    }
+        #board {
+            width: 500px;
+            height: 500px;
+            background-color: #ffeef6;
+            border: 6px solid #fbaed2;
+            border-radius: 16px;
+            position: relative;
+            box-shadow: 0 0 20px #fbaed288;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
 
-    #pieces-container::-webkit-scrollbar { width: 8px; }
-    #pieces-container::-webkit-scrollbar-thumb {
-      background-color: #fbaed2;
-      border-radius: 10px;
-    }
+        #pieces-container {
+            width: 200px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 10px;
+            background-color: #fff0f7;
+            border-radius: 12px;
+            border: 3px solid #fbaed2;
+            scrollbar-width: thin;
+            user-select: none;
+        }
 
-    .piece {
-      background-size: 500px 500px;
-      background-repeat: no-repeat;
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-      cursor: grab;
-      transition: box-shadow 0.3s, border 0.3s;
-      position: absolute;
-      flex-shrink: 0;
-    }
+        #pieces-container::-webkit-scrollbar {
+            width: 8px;
+        }
 
-    .piece.dragging {
-      cursor: grabbing;
-      box-shadow: 0 0 15px 3px #fbaed2;
-      z-index: 1000;
-    }
+        #pieces-container::-webkit-scrollbar-thumb {
+            background-color: #fbaed2;
+            border-radius: 10px;
+        }
 
-    .piece.correct {
-      border: 3px solid #69c36c;
-      cursor: default;
-      box-shadow: 0 0 12px 2px #69c36c;
-    }
+        .piece {
+            background-size: 500px 500px;
+            background-repeat: no-repeat;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            cursor: grab;
+            transition: box-shadow 0.3s, border 0.3s;
+            position: relative;
+            flex-shrink: 0;
+        }
 
-    #final-image {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 500px;
-      height: 500px;
-      background-size: cover;
-      opacity: 0;
-      transition: opacity 0.8s ease;
-      pointer-events: none;
-      border-radius: 16px;
-    }
+        .piece.dragging {
+            cursor: grabbing;
+            box-shadow: 0 0 15px 3px #fbaed2;
+            z-index: 1000;
+        }
 
-    #board-blocker {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(255, 255, 255, 0.7);
-      z-index: 100;
-      display: none;
-    }
+        .piece.correct {
+            border: 3px solid #69c36c;
+            cursor: default;
+            box-shadow: 0 0 12px 2px #69c36c;
+        }
 
-    /* Tela preta parabéns */
-    #tela-parabens {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: black;
-      color: white;
-      font-size: 2.5em;
-      font-weight: bold;
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-      flex-direction: column;
-      text-align: center;
-    }
-    #tela-parabens button {
-      margin-top: 20px;
-      padding: 12px 24px;
-      font-size: 1em;
-      border: none;
-      border-radius: 8px;
-      background-color: #ff99cc;
-      color: black;
-      cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    }
+        #final-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 500px;
+            height: 500px;
+            background-size: cover;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            pointer-events: none;
+            border-radius: 16px;
+        }
 
-    @media (max-width: 800px) {
-      .main-content { flex-direction: column; align-items: center; }
-      #board, #pieces-container { width: 90vw; height: 90vw; }
-      #pieces-container {
-        flex-direction: row;
-        overflow-x: auto;
-        overflow-y: hidden;
-        height: auto;
-      }
-      .piece {
-        width: calc(90vw / 4 - 12px);
-        height: calc(90vw / 4 - 12px);
-        background-size: 90vw 90vw;
-      }
-      #final-image { width: 90vw; height: 90vw; }
-    }
-  </style>
+        #board-blocker {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.7);
+            z-index: 100;
+            display: none;
+        }
+
+        /* Tela preta parabéns */
+        #tela-parabens {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: black;
+            color: white;
+            font-size: 2.5em;
+            font-weight: bold;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        #tela-parabens button {
+            margin-top: 20px;
+            padding: 12px 24px;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            background-color: #ff99cc;
+            color: black;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (max-width: 800px) {
+            .main-content {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #board,
+            #pieces-container {
+                width: 90vw;
+                height: 90vw;
+            }
+
+            #pieces-container {
+                flex-direction: row;
+                overflow-x: auto;
+                overflow-y: hidden;
+                height: auto;
+            }
+
+            .piece {
+                width: calc(90vw / 4 - 12px);
+                height: calc(90vw / 4 - 12px);
+                background-size: 90vw 90vw;
+            }
+
+            #final-image {
+                width: 90vw;
+                height: 90vw;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-  <div class="topbar">
-    <div class="topbar-left"></div>
-    <div class="topbar-right">
-      <div id="piece-count">Total de Peças: 16</div>
-      <button id="piecesBtn" title="Peças">🧩</button>
-    </div>
-  </div>
-
-  <div class="game-area">
-    <div id="preview-container">
-      <img id="preview-image" src="https://i.postimg.cc/vZP4b78G/1.jpg" alt="Miniatura" />
+    <div class="topbar">
+        <div class="topbar-left"></div>
+        <div class="topbar-right">
+            <div id="piece-count">Total de Peças: 16</div>
+            <button id="piecesBtn" title="Peças">🧩</button>
+        </div>
     </div>
 
-    <div class="main-content">
-      <div id="board">
-        <div id="board-blocker"></div>
-        <div id="final-image"></div>
-      </div>
-      <div id="pieces-container"></div>
+    <div class="game-area">
+        <div id="preview-container">
+            <img id="preview-image" src="https://i.postimg.cc/vZP4b78G/1.jpg" alt="Miniatura" />
+        </div>
+
+        <div class="main-content">
+            <div id="board">
+                <div id="board-blocker"></div>
+                <div id="final-image"></div>
+            </div>
+            <div id="pieces-container"></div>
+        </div>
     </div>
-  </div>
 
-  <!-- Tela preta parabéns -->
-  <div id="tela-parabens">
-    🎉 Parabéns! Você completou o quebra-cabeça! 🎉
-    <button onclick="reiniciarJogo()">Jogar Novamente</button>
-  </div>
+    <!-- Tela preta parabéns -->
+    <div id="tela-parabens">
+        🎉 Parabéns! Você completou o quebra-cabeça! 🎉
+        <button onclick="reiniciarJogo()">Jogar Novamente</button>
+    </div>
 
-  <!-- Sons -->
-  <audio id="move-sound" src="https://actions.google.com/sounds/v1/cartoon/pop.ogg"></audio>
-  <audio id="win-sound" src="https://www.soundjay.com/human/sounds/applause-8.mp3"></audio>
+    <!-- Sons -->
+    <audio id="move-sound" src="https://actions.google.com/sounds/v1/cartoon/pop.ogg"></audio>
+    <audio id="win-sound" src="https://www.soundjay.com/human/sounds/applause-8.mp3"></audio>
 
-  <script>
-    const board = document.getElementById("board");
-    const piecesContainer = document.getElementById("pieces-container");
-    const finalImage = document.getElementById("final-image");
-    const previewImage = document.getElementById("preview-image");
-    const pieceCountText = document.getElementById("piece-count");
-    const boardBlocker = document.getElementById("board-blocker");
-    const moveSound = document.getElementById("move-sound");
-    const winSound = document.getElementById("win-sound");
-    const telaParabens = document.getElementById("tela-parabens");
+    <script>
+        const board = document.getElementById("board");
+        const piecesContainer = document.getElementById("pieces-container");
+        const finalImage = document.getElementById("final-image");
+        const previewImage = document.getElementById("preview-image");
+        const pieceCountText = document.getElementById("piece-count");
+        const boardBlocker = document.getElementById("board-blocker");
+        const moveSound = document.getElementById("move-sound");
+        const winSound = document.getElementById("win-sound");
+        const telaParabens = document.getElementById("tela-parabens");
 
-    let boardSize = 500;
-    let piecesPerRow = 2;
-    let piecesPerCol = 2;
-    let pieceSize = boardSize / piecesPerRow;
-    const puzzleImage = "https://i.postimg.cc/vZP4b78G/1.jpg";
-    let pieces = [];
+        let boardSize = 500;
+        let piecesPerRow = 2;
+        let piecesPerCol = 2;
+        let pieceSize = boardSize / piecesPerRow;
+        const puzzleImage = "https://i.postimg.cc/vZP4b78G/1.jpg";
+        let pieces = [];
 
-    function createPieces(rows, cols) {
-      board.innerHTML = '<div id="board-blocker"></div><div id="final-image"></div>';
-      piecesContainer.innerHTML = "";
-      pieces = [];
-      pieceSize = boardSize / cols;
+        function createPieces(rows, cols) {
+            board.innerHTML = '<div id="board-blocker"></div><div id="final-image"></div>';
+            piecesContainer.innerHTML = "";
+            pieces = [];
+            pieceSize = boardSize / cols;
 
-      finalImage.style.backgroundImage = `url(${puzzleImage})`;
-      finalImage.style.opacity = "0";
+            finalImage.style.backgroundImage = `url(${puzzleImage})`;
+            finalImage.style.opacity = "0";
 
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          const piece = document.createElement("div");
-          piece.classList.add("piece");
-          piece.style.width = pieceSize + "px";
-          piece.style.height = pieceSize + "px";
-          piece.style.backgroundImage = `url(${puzzleImage})`;
-          piece.style.backgroundPosition = `-${c * pieceSize}px -${r * pieceSize}px`;
-          piece.correctX = c * pieceSize;
-          piece.correctY = r * pieceSize;
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const piece = document.createElement("div");
+                    piece.classList.add("piece");
+                    piece.style.width = pieceSize + "px";
+                    piece.style.height = pieceSize + "px";
+                    piece.style.backgroundImage = `url(${puzzleImage})`;
+                    piece.style.backgroundPosition = `-${c * pieceSize}px -${r * pieceSize}px`;
+                    piece.correctX = c * pieceSize;
+                    piece.correctY = r * pieceSize;
 
-          piece.setAttribute("draggable", "true");
-          piece.addEventListener("dragstart", dragStart);
-          piece.addEventListener("dragend", dragEnd);
+                    piece.setAttribute("draggable", "true");
+                    piece.addEventListener("dragstart", dragStart);
+                    piece.addEventListener("dragend", dragEnd);
 
-          piecesContainer.appendChild(piece);
-          pieces.push(piece);
+                    piecesContainer.appendChild(piece);
+                    pieces.push(piece);
+                }
+            }
+
+            previewImage.src = puzzleImage;
+            pieceCountText.textContent = `Total de Peças: ${rows * cols}`;
+
+            shufflePieces();
         }
-      }
 
-      previewImage.src = puzzleImage;
-      pieceCountText.textContent = `Total de Peças: ${rows * cols}`;
+        function shufflePieces() {
+            for (let i = pieces.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                piecesContainer.appendChild(pieces[j]);
+                [pieces[i], pieces[j]] = [pieces[j], pieces[i]];
+            }
+        }
 
-      shufflePieces();
-    }
+        function dragStart(e) {
+            this.classList.add("dragging");
 
-    function shufflePieces() {
-      for (let i = pieces.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        piecesContainer.appendChild(pieces[j]);
-        [pieces[i], pieces[j]] = [pieces[j], pieces[i]];
-      }
-    }
+            // ✅ Adiciona a peça ao tabuleiro
+            board.appendChild(this);
 
-    function dragStart(e) {
-      this.classList.add("dragging");
-      const rect = this.getBoundingClientRect();
-      this.dragOffsetX = e.clientX - rect.left;
-      this.dragOffsetY = e.clientY - rect.top;
-    }
+            const rect = this.getBoundingClientRect();
+            this.dragOffsetX = e.clientX - rect.left;
+            this.dragOffsetY = e.clientY - rect.top;
+        }
 
-    function dragEnd(e) {
-      this.classList.remove("dragging");
+        function dragEnd(e) {
+            this.classList.remove("dragging");
 
-      const boardRect = board.getBoundingClientRect();
-      let x = e.clientX - boardRect.left - this.dragOffsetX;
-      let y = e.clientY - boardRect.top - this.dragOffsetY;
+            const boardRect = board.getBoundingClientRect();
+            let x = e.clientX - boardRect.left - this.dragOffsetX;
+            let y = e.clientY - boardRect.top - this.dragOffsetY;
 
-      // Limitar a peça dentro do tabuleiro
-      if (x < 0) x = 0;
-      if (y < 0) y = 0;
-      if (x + pieceSize > boardSize) x = boardSize - pieceSize;
-      if (y + pieceSize > boardSize) y = boardSize - pieceSize;
+            const dx = x - this.correctX;
+            const dy = y - this.correctY;
+            const snapTolerance = pieceSize / 4;
 
-      const dx = x - this.correctX;
-      const dy = y - this.correctY;
-      const snapTolerance = pieceSize / 4;
+            // ✅ Reproduz o som sempre para todas as peças
+            const soundClone = moveSound.cloneNode();
+            soundClone.play();
 
-      // Som
-      const soundClone = moveSound.cloneNode();
-      soundClone.play();
+            if (Math.abs(dx) < snapTolerance && Math.abs(dy) < snapTolerance) {
+                // Encaixe correto
+                this.style.position = "absolute";
+                this.style.left = this.correctX + "px";
+                this.style.top = this.correctY + "px";
+                this.classList.add("correct");
+                this.setAttribute("draggable", "false");
+                this.style.cursor = "default"; // Opcional: muda o cursor
+                checkComplete();
+            } else {
+                // Encaixe incorreto - Permanece no tabuleiro
+                this.style.position = "absolute";
+                this.style.left = x + "px";
+                this.style.top = y + "px";
+            }
+        }
 
-      if (Math.abs(dx) < snapTolerance && Math.abs(dy) < snapTolerance) {
-        this.style.position = "absolute";
-        this.style.left = this.correctX + "px";
-        this.style.top = this.correctY + "px";
-        this.classList.add("correct");
-        this.setAttribute("draggable", "false");
-        board.appendChild(this);
-        checkComplete();
-      } else {
-        this.style.position = "absolute";
-        this.style.left = x + "px";
-        this.style.top = y + "px";
-        board.appendChild(this);
-      }
-    }
+        board.addEventListener("dragover", e => e.preventDefault());
 
-    board.addEventListener("dragover", e => e.preventDefault());
+        document.getElementById("piecesBtn").addEventListener("click", () => {
+            if (piecesPerRow === 2) {
+                piecesPerRow = 3;
+                piecesPerCol = 3;
+            } else if (piecesPerRow === 3) {
+                piecesPerRow = 4;
+                piecesPerCol = 4;
+            } else {
+                piecesPerRow = 2;
+                piecesPerCol = 2;
+            }
+            createPieces(piecesPerRow, piecesPerCol);
+        });
 
-    document.getElementById("piecesBtn").addEventListener("click", () => {
-      if (piecesPerRow === 2) {
-        piecesPerRow = 3;
-        piecesPerCol = 3;
-      } else if (piecesPerRow === 3) {
-        piecesPerRow = 4;
-        piecesPerCol = 4;
-      } else {
-        piecesPerRow = 2;
-        piecesPerCol = 2;
-      }
-      createPieces(piecesPerRow, piecesPerCol);
-    });
+        function checkComplete() {
+            const allCorrect = pieces.every(p => p.classList.contains("correct"));
+            if (allCorrect) {
+                finalImage.style.opacity = "1";
+                winSound.play();
+                boardBlocker.style.display = "block";
+                telaParabens.style.display = "flex";
+            }
+        }
 
-    function checkComplete() {
-      const allCorrect = pieces.every(p => p.classList.contains("correct"));
-      if (allCorrect) {
-        finalImage.style.opacity = "1";
-        winSound.play();
-        boardBlocker.style.display = "block";
-        telaParabens.style.display = "flex";
-      }
-    }
+        function reiniciarJogo() {
+            telaParabens.style.display = "none";
+            boardBlocker.style.display = "none";
+            createPieces(piecesPerRow, piecesPerCol);
+        }
 
-    function reiniciarJogo() {
-      telaParabens.style.display = "none";
-      boardBlocker.style.display = "none";
-      createPieces(piecesPerRow, piecesPerCol);
-    }
-
-    // Inicializa o jogo com a tela preta escondida
-    telaParabens.style.display = "none";
-    createPieces(piecesPerRow, piecesPerCol);
-  </script>
+        // Inicializa o jogo com a tela preta escondida
+        telaParabens.style.display = "none";
+        createPieces(piecesPerRow, piecesPerCol);
+    </script>
 </body>
+
 </html>
