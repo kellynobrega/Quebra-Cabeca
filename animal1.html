@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
@@ -336,7 +336,7 @@
       const dy = y - this.correctY;
       const snapTolerance = pieceSize / 4;
 
-      // Som
+      // ✅ Reproduz o som sempre para todas as peças
       const soundClone = moveSound.cloneNode();
       soundClone.play();
 
@@ -388,6 +388,7 @@
       createPieces(piecesPerRow, piecesPerCol);
     }
 
+    // Inicializa o jogo com a tela preta escondida
     telaParabens.style.display = "none";
     createPieces(piecesPerRow, piecesPerCol);
   </script>
