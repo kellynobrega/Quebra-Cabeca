@@ -138,7 +138,8 @@
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
             cursor: grab;
             transition: box-shadow 0.3s, border 0.3s;
-            position: relative;
+            position: absolute;
+            /* Removido o 'relative' */
             flex-shrink: 0;
         }
 
@@ -317,8 +318,8 @@
                     piece.setAttribute("draggable", "true");
                     piece.addEventListener("dragstart", dragStart);
                     piece.addEventListener("dragend", dragEnd);
-
-                    piecesContainer.appendChild(piece);
+                    // ✅ Adiciona a peça diretamente ao board
+                    board.appendChild(piece);
                     pieces.push(piece);
                 }
             }
@@ -332,17 +333,18 @@
         function shufflePieces() {
             for (let i = pieces.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                piecesContainer.appendChild(pieces[j]);
+                // ✅ Troca as posições das peças
                 [pieces[i], pieces[j]] = [pieces[j], pieces[i]];
+                // Define a posição da peça no tabuleiro
+                pieces[i].style.left = pieces[i].correctX + 'px';
+                pieces[i].style.top = pieces[i].correctY + 'px';
+                pieces[j].style.left = pieces[j].correctX + 'px';
+                pieces[j].style.top = pieces[j].correctY + 'px';
             }
         }
 
         function dragStart(e) {
             this.classList.add("dragging");
-
-            // ✅ Adiciona a peça ao tabuleiro
-            board.appendChild(this);
-
             const rect = this.getBoundingClientRect();
             this.dragOffsetX = e.clientX - rect.left;
             this.dragOffsetY = e.clientY - rect.top;
@@ -364,17 +366,13 @@
             soundClone.play();
 
             if (Math.abs(dx) < snapTolerance && Math.abs(dy) < snapTolerance) {
-                // Encaixe correto
-                this.style.position = "absolute";
                 this.style.left = this.correctX + "px";
                 this.style.top = this.correctY + "px";
                 this.classList.add("correct");
                 this.setAttribute("draggable", "false");
-                this.style.cursor = "default"; // Opcional: muda o cursor
+                this.style.cursor = "default";
                 checkComplete();
             } else {
-                // Encaixe incorreto - Permanece no tabuleiro
-                this.style.position = "absolute";
                 this.style.left = x + "px";
                 this.style.top = y + "px";
             }
