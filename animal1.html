@@ -138,8 +138,7 @@
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
             cursor: grab;
             transition: box-shadow 0.3s, border 0.3s;
-            position: absolute;
-            /* Removido o 'relative' */
+            position: relative;
             flex-shrink: 0;
         }
 
@@ -153,6 +152,7 @@
             border: 3px solid #69c36c;
             cursor: default;
             box-shadow: 0 0 12px 2px #69c36c;
+            pointer-events: none; /* Impede que a peça seja movida novamente */
         }
 
         #final-image {
@@ -318,8 +318,8 @@
                     piece.setAttribute("draggable", "true");
                     piece.addEventListener("dragstart", dragStart);
                     piece.addEventListener("dragend", dragEnd);
-                    // ✅ Adiciona a peça diretamente ao board
-                    board.appendChild(piece);
+
+                    piecesContainer.appendChild(piece);
                     pieces.push(piece);
                 }
             }
@@ -333,13 +333,8 @@
         function shufflePieces() {
             for (let i = pieces.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                // ✅ Troca as posições das peças
+                piecesContainer.appendChild(pieces[j]);
                 [pieces[i], pieces[j]] = [pieces[j], pieces[i]];
-                // Define a posição da peça no tabuleiro
-                pieces[i].style.left = pieces[i].correctX + 'px';
-                pieces[i].style.top = pieces[i].correctY + 'px';
-                pieces[j].style.left = pieces[j].correctX + 'px';
-                pieces[j].style.top = pieces[j].correctY + 'px';
             }
         }
 
@@ -357,24 +352,35 @@
             let x = e.clientX - boardRect.left - this.dragOffsetX;
             let y = e.clientY - boardRect.top - this.dragOffsetY;
 
+            // Limitar a peça dentro do tabuleiro
+            if (x < 0) x = 0; // Impede que a peça saia pela esquerda
+            if (y < 0) y = 0; // Impede que a peça saia pela parte superior
+            if (x + pieceSize > boardSize) x = boardSize - pieceSize; // Impede que a peça saia pela direita
+            if (y + pieceSize > boardSize) y = boardSize - pieceSize; // Impede que a peça saia pela parte inferior
+
             const dx = x - this.correctX;
             const dy = y - this.correctY;
             const snapTolerance = pieceSize / 4;
 
-            // ✅ Reproduz o som sempre para todas as peças
+            // Som de movimento
             const soundClone = moveSound.cloneNode();
             soundClone.play();
 
             if (Math.abs(dx) < snapTolerance && Math.abs(dy) < snapTolerance) {
-                this.style.left = this.correctX + "px";
+                // Se a peça estiver no lugar certo (dentro da tolerância de "snap")
+                this.style.position = "absolute";
+                this.style.left = this.correctX + "px"; // A posição correta no tabuleiro
                 this.style.top = this.correctY + "px";
-                this.classList.add("correct");
-                this.setAttribute("draggable", "false");
-                this.style.cursor = "default";
-                checkComplete();
+                this.classList.add("correct"); // Adiciona a classe "correct" à peça
+                this.setAttribute("draggable", "false"); // Bloqueia a peça para não ser movida novamente
+                board.appendChild(this); // Garante que a peça fique no tabuleiro
+                checkComplete(); // Verifica se o quebra-cabeça foi completado
             } else {
-                this.style.left = x + "px";
+                // Caso a peça não tenha sido colocada corretamente, volta para o tabuleiro
+                this.style.position = "absolute";
+                this.style.left = x + "px"; // Posiciona a peça no lugar onde foi solta
                 this.style.top = y + "px";
+                board.appendChild(this);
             }
         }
 
