@@ -326,7 +326,7 @@
       let x = e.clientX - boardRect.left - this.dragOffsetX;
       let y = e.clientY - boardRect.top - this.dragOffsetY;
 
-      // Garantir que a peça fique dentro do tabuleiro
+      // Limitar a peça dentro do tabuleiro
       if (x < 0) x = 0;
       if (y < 0) y = 0;
       if (x + pieceSize > boardSize) x = boardSize - pieceSize;
@@ -336,7 +336,7 @@
       const dy = y - this.correctY;
       const snapTolerance = pieceSize / 4;
 
-      // ✅ Reproduz o som sempre para todas as peças
+      // Som
       const soundClone = moveSound.cloneNode();
       soundClone.play();
 
